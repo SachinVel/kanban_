@@ -13,11 +13,17 @@ export const UserSlice = createSlice({
   name: 'user',
   initialState: initialUserState,
   reducers: {
-    setUserLoggedIn: (state) => {
-      state.userLoggedIn = true;
+    setUserLoggedIn:(state, action) => {
+      return {
+        ...action.payload,
+        userLoggedIn: true,
+      };
     },
-    setUserLoggedOut: (state) => {
-      state.userLoggedIn = false;
+    setUserLoggedOut: (state,action) => {
+      return {
+        ...action.payload,
+        userLoggedIn: false,
+      };
     },
   },
 });

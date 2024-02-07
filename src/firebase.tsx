@@ -3,7 +3,8 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 import { setUserLoggedIn, setUserLoggedOut } from './reducer/userSlice';
-import { store } from './store';
+import { loadStateFromDb, store } from './store';
+import { hydrate } from "./reducer/dataSlice";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -39,14 +40,23 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, provider);
 export const setAuthListener = () => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // User is signed in, see docs for a list of available properties
+      loadStateFromDb().then((data: any) => {
+        let state = JSON.parse(data.state);
+        state = {...state, userLoggedIn:true};
+        // store.dispatch(state);
+        store.dispatch(setUserLoggedIn(state));
+      });
       // https://firebase.google.com/docs/reference/js/auth.user
-      store.dispatch(setUserLoggedIn());
+      
       // ...
     } else {
       // User is signed out
-      // ...
-      store.dispatch(setUserLoggedOut());
+      loadStateFromDb().then((data: any) => {
+        let state = JSON.parse(data.state);
+        state = {...state, userLoggedIn:false};
+        store.dispatch(setUserLoggedOut(state));
+      });
+      // store.dispatch(setUserLoggedOut());
     }
     authLoaded = true;
   });

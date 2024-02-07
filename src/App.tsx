@@ -33,22 +33,6 @@ const App = () => {
         setIsAuthLoaded(true);
         setAuthListener();
       });
-      // if (user !== null && user.userLoggedIn) {
-      //   loadStateFromDb().then((data: any) => {
-      //     let state = JSON.parse(data.state);
-      //     store.dispatch(hydrate(state.data));
-      //     setIsAuthLoaded(true);
-      //     setAuthListener();
-      //   });
-      // } else {
-      //   let emptyBoard = {
-      //     data: [],
-      //     colorTheme: 'dark'
-      //   }
-      //   store.dispatch(hydrate(emptyBoard));
-      //   setIsAuthLoaded(true);
-      //   setAuthListener();
-      // }
     }).catch((error) => {
       console.debug('Error in checking user login initially :', error);
       setAuthListener();
@@ -61,9 +45,9 @@ const App = () => {
     setIsAuthLoaded(false);
     loadStateFromDb().then((data: any) => {
       let state = JSON.parse(data.state);
+      state = {...state, ...user};
       store.dispatch(hydrate(state.data));
       setIsAuthLoaded(true);
-      // setAuthListener();
     });
     // if (user !== null && user.userLoggedIn) {
     //   loadStateFromDb().then((data: any) => {

@@ -26,8 +26,7 @@ export const loadStateFromDb = async () => {
               data: {
                 data : [],
                 colorTheme : 'dark'
-              },
-              userLoggedIn : 'false'
+              }
             }),
           }
           await setDoc(doc(db, "kanban", userId), emptyBoard);
@@ -39,8 +38,7 @@ export const loadStateFromDb = async () => {
             data: {
               data : [],
               colorTheme : 'dark'
-            },
-            userLoggedIn : 'false'
+            }
           }),
         }
         resolve(emptyBoard);
@@ -57,7 +55,7 @@ export const loadStateFromDb = async () => {
 export const saveState = async (state: any) => {
   try {
     let userId = getUserId();
-    if (userId!==null && userId!==undefined && state.data.data.length>0 ) {
+    if (userId!==null && userId!==undefined ) {
       const serializedState = JSON.stringify(state);
       await updateDoc(doc(db, `/kanban/${userId}`), {
         state: serializedState,
