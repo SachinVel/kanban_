@@ -62,7 +62,7 @@ const Launch = () => {
         data: [],
         colorTheme: 'dark'
       }
-      store.dispatch(hydrate(emptyBoard));
+      // store.dispatch(hydrate(emptyBoard));
     }).catch((error) => {
       console.error('Error is logging out : ', error);
     });

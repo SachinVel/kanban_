@@ -34,7 +34,16 @@ export const loadStateFromDb = async () => {
           resolve(emptyBoard);
         }
       }else{
-        reject();
+        let emptyBoard = {
+          state:JSON.stringify({
+            data: {
+              data : [],
+              colorTheme : 'dark'
+            },
+            userLoggedIn : 'false'
+          }),
+        }
+        resolve(emptyBoard);
       }
 
     } catch (e) {
