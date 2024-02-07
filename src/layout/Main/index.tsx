@@ -13,7 +13,9 @@ interface MainProps {
 const Main = (props: MainProps) => {
   const { themeChange } = props;
   const [hideSideNav, setHideSideNav] = useState<boolean>(false);
-  const data = useAppSelector((state) => state.data.data);
+  const data = useAppSelector((state) => {
+    return state.data.data}
+  );
   const currentTab = useAppSelector((state) => state.boardTab);
   const currentBoard = data?.find((item) => item.name === currentTab);
   const mobileQuery = useMediaQuery('mobile');

@@ -14,6 +14,7 @@ interface SideNavProps {
 const SideNav = (props: SideNavProps) => {
   const { themeChange, hideSideNav, toggleOnHide, setToggleNav } = props;
   const colorTheme = useAppSelector((state) => state.data.colorTheme);
+  
   const [toggled, setToggled] = useState<boolean>(colorTheme === 'light');
 
   const board = useAppSelector((state) => state.data.data);

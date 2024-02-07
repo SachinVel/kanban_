@@ -2,23 +2,58 @@ import { configureStore } from '@reduxjs/toolkit';
 import dataReducer from './reducer/dataSlice';
 import boardTabReducer from './reducer/boardTabSlice';
 import modalReducer from './reducer/modalSlice';
+import userReducer from './reducer/userSlice';
 
-const KEY = 'kanban-app-state';
-export const loadState = () => {
-  try {
-    const serializedState = localStorage.getItem(KEY);
-    if (!serializedState) return undefined;
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
+import { db, getUserId } from './firebase';
 
-    return JSON.parse(serializedState);
-  } catch (e) {
-    return undefined;
-  }
+
+export const loadStateFromDb = async () => {
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      let userId = getUserId();
+      if ( userId!==null && userId!==undefined) {
+
+        const docRef = doc(db, "kanban", userId);
+
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          resolve(docSnap.data());
+        } else {
+          let emptyBoard = {
+            state:JSON.stringify({
+              data: {
+                data : [],
+                colorTheme : 'dark'
+              },
+              userLoggedIn : 'false'
+            }),
+          }
+          await setDoc(doc(db, "kanban", userId), emptyBoard);
+          resolve(emptyBoard);
+        }
+      }else{
+        reject();
+      }
+
+    } catch (e) {
+      reject(-2);//exception errorCode
+      return undefined;
+    }
+  })
+
 };
 
 export const saveState = async (state: any) => {
   try {
-    const serializedState = JSON.stringify(state);
-    localStorage.setItem(KEY, serializedState);
+    let userId = getUserId();
+    if (userId!==null && userId!==undefined && state.data.data.length>0 ) {
+      const serializedState = JSON.stringify(state);
+      await updateDoc(doc(db, `/kanban/${userId}`), {
+        state: serializedState,
+      });
+    }
   } catch (e) {
     console.error(e);
   }
@@ -29,8 +64,8 @@ export const store = configureStore({
     data: dataReducer,
     boardTab: boardTabReducer,
     modal: modalReducer,
-  },
-  preloadedState: loadState(),
+    user: userReducer
+  }
 });
 
 export type RootState = ReturnType<typeof store.getState>;

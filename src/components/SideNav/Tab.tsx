@@ -10,6 +10,7 @@ import { openModal } from '../../reducer/modalSlice';
 const Tab = (props: ITab) => {
   const { tab, addNew, defaultTab, setToggleNav } = props;
   const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
   const currentTab = useAppSelector((state) => state.boardTab);
   const active = currentTab ? currentTab === tab : defaultTab;
 
@@ -24,7 +25,7 @@ const Tab = (props: ITab) => {
     setToggleNav && setToggleNav(false);
   };
 
-  if (addNew) {
+  if (addNew && user.userLoggedIn) {
     return (
       <button className='SideNav__tab SideNav__tab--addNew' onClick={handleClickAddNew}>
         <IconBoard />+ Create New Board

@@ -1,6 +1,9 @@
 import { useState, useRef } from 'react';
 import useOnClickOutside from '../hooks/useOnClickOutside';
 import { IconEllipsis } from '../data/icons';
+import { logout } from "../firebase";
+import { store } from '../store';
+import { hydrate } from '../reducer/dataSlice';
 
 type direciton = 'right' | undefined;
 
@@ -31,6 +34,18 @@ const DropDown = (props: DropDownProps) => {
     onDelete();
   };
 
+  const signout = ()=>{
+    logout().then(()=>{
+      let emptyBoard = {
+        data: [],
+        colorTheme: 'dark'
+      }
+      store.dispatch(hydrate(emptyBoard));
+    }).catch((error)=>{
+      console.error('Error is logging out : ',error);
+    });
+  }
+
   useOnClickOutside(dropDownRef, handleClickOutside);
 
   return (
@@ -50,6 +65,9 @@ const DropDown = (props: DropDownProps) => {
           </button>
           <button type='button' className='DropDown__text DropDown__text--warning' onClick={handleOnDelete}>
             Delete {text}
+          </button>
+          <button type='button' className='DropDown__text DropDown__text--warning' onClick={signout}>
+            logout
           </button>
         </div>
       )}

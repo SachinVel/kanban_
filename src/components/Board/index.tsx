@@ -9,6 +9,7 @@ import { openModal } from '../../reducer/modalSlice';
 import { DragDropContext, resetServerContext } from '@hello-pangea/dnd';
 import { reorderInSameColumn, reorderInDiffColumn } from '../../helper/util';
 import useMediaQuery from '../../hooks/useMediaQuery';
+import { useAppSelector } from '../../hooks/useRedux';
 
 resetServerContext();
 interface BoardProps {
@@ -20,6 +21,7 @@ interface BoardProps {
 
 const Board = (props: BoardProps) => {
   const { hideSideNav, board, allBoards, currentTab } = props;
+  const user = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const mobileQuery = useMediaQuery('mobile');
   const [draggableData, setDraggableData] = useState(board);
@@ -80,12 +82,12 @@ const Board = (props: BoardProps) => {
       dispatch(setTab(allBoards[0].name));
       dispatch(setBoardStatus(allBoards[0].name));
     }
-    if (allBoards.length === 0) {
+    if (allBoards.length === 0 && user.userLoggedIn) {
       dispatch(setTab('No Board Found'));
     }
   }, [allBoards, board]);
 
-  if (!draggableData)
+  if (!draggableData && user.userLoggedIn)
     return (
       <div className={`Board ${onHide} Board--noItem`}>
         <p className='Board--noItem__txt'>This board is empty. Create a new column to get started.</p>
@@ -99,6 +101,13 @@ const Board = (props: BoardProps) => {
             &nbsp; + Create New Board &nbsp;
           </Button>
         </div>
+      </div>
+    );
+
+    if (!draggableData && !user.userLoggedIn)
+    return (
+      <div className={`Board ${onHide} Board--noItem`}>
+        <p className='Board--noItem__txt'>Kindly sign in to access the application.</p>
       </div>
     );
 
